@@ -1,0 +1,39 @@
+group:
+  created: "§aGruppe %group% wurde erstellt."
+  delete: "§cGruppe %group% wurde gelöscht."
+  list: "§aListe der Gruppen:"
+  already_exists: "§cDiese Gruppe existiert bereits!"
+  doesnt_exists: "§cDiese Gruppe existiert nicht!"
+  permissions_title: "§aDie Gruppe hat folgende Berechtigungen:"
+  permission_added: "§aDu hast die Berechtigung %permission% hinzugefügt."
+  permission_removed: "§cDu hast die Berechtigung %permission% entfernt."
+  permission_added_failed: "§cDu kannst die Berechtigung %permission% nicht hinzufügen da diese bereits existiert."
+  permission_removed_failed: "§cDu kannst die Berechtigung %permission% nicht entfernen da es diese nicht gibt."
+
+user:
+  set: "§a%player%ist nun in der Gruppe %group%."
+  removed: "§c%player% wurde von der Gruppe %group% entfernt."
+  info: "§6Spieler '%player%' ist in der Gruppe '%group%'."
+  info_limited: "§6Spieler '%player%' ist in der Gruppe '%group%' bis %date%."
+  not_online: "§cDieser Spieler ist nicht online!"
+  invalid_time: "§cDer Zeitsuffix kann nur d, h, m oder s sein für tag, stunde, minute und sekunde."
+  auto_group_removal: "§5Die Zeit ist vorbei, du bist nun nicht mehr in der Gruppe '%group%'."
+
+whoami:
+  forever: "§6Du bist in der Gruppe '%group%'"
+  limited: "§6Du bist in der Gruppe '%group%''. Du wirst automatisch aus der Gruppe entfernt am %date%"
+
+cmd:
+  no_permission: "§4Du hast keine Berechtigung diesen Befehl zu benutzen!"
+  invalid: "§4Dieser Befehl existiert nicht!"
+  not_all_args_used: "§cFür diesen Befehl werden noch weitere argumente benötigt."
+  invalid_type: "§c%arg% muss vom type %type% sein."
+
+server:
+  join: "%group% §c%player% hat den Server betreten."
+  leave: "%group% §c%player% hat den Server verlassen."
+
+miniperm:
+  test:
+    has_permission: "§aDu hast die Berechtigung: %permission%"
+    doesnt_have_permission: "§cDu hast die Berechtigung nicht: %permission%"

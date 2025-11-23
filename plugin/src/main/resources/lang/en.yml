@@ -1,0 +1,39 @@
+group:
+  created: "§aGroup %group% was created."
+  delete: "§cGroup %group% was deleted."
+  list: "§aList of groups:"
+  already_exists: "§cThis group already exists!"
+  doesnt_exists: "§cThis group doesn't exist!" 
+  permissions_title: "§aThe group has the following permissions:"
+  permission_added: "§aYou added the permission %permission%"
+  permission_removed: "§cYou removed the permission %permission%"
+  permission_added_failed: "§cYou can't add the permission %permission% as the group already has it."
+  permission_removed_failed: "§cYou can't remove the %permission% as the group doesn't have it."
+
+user:
+  set: "§aSet %player%'s group to %group%."
+  removed: "§cRemoved %player% from %group%."
+  info: "§6Player '%player%' is part in the '%group%' group."
+  info_limited: "§6Player '%player%' is part in the '%group%' group until %date%."
+  not_online: "§cThat player is not online!"
+  invalid_time: "§cThe time part can only contain the suffixes d, h, m and s for day, hour, minute and second."
+  auto_group_removal: "§5The time is up, you are now no longer in the group '%group%'."
+
+whoami:
+  forever: "§6Your group is '%group%''."
+  limited: "§6Your group is '%group%''. And you are part of it until %date%."
+
+cmd:
+  no_permission: "§4You don't have permission to use this command!"
+  invalid: "§4This command does not exist!"
+  not_all_args_used: "§cThis command needs some more arguments."
+  invalid_type: "§c%arg% must be a %type%"
+
+server:
+  join: "%group% §c%player% joined the game."
+  leave: "%group% §c%player% left the game."
+
+miniperm:
+  test:
+    has_permission: "§aYou have the permission: %permission%"
+    doesnt_have_permission: "§cYou don't have the permission: %permission%"

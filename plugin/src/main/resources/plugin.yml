@@ -1,0 +1,36 @@
+name: MiniPerm
+version: '1.0.10a'
+main: de.marsg.miniperm.MiniPerm
+api-version: '1.21'
+description: Coding test - Permissions Plugin
+commands:
+  miniperm:
+    description: Main command for MiniPerm
+    usage: |
+      §cUsage:
+      §f/miniperm groups <list/create/delete> [group_name] [weight] [is_default] [prefix]§7- Manage overall groups
+      §f/miniperm permissions <group_name> <list/add/remove> [permission] §7- Manage a specific group
+      §f/miniperm user <info/set_group/remove_group> <player_name> [group_name] [time] §7- do group related stuff
+      §f/miniperm create_sign §7- Creates a sign which displays the players role (MUST LOOK AT A SIGN)
+  whoami:
+    description: Display a users group
+    usage: |
+      §cUsage:
+      §f/whoami spawnwitch §7- Give a message with the users group
+
+permissions:
+  miniperm.admin:
+    description: Manage everything about this plugin
+    default: op 
+  miniperm.groups:
+    description: Allow managing groups
+    default: op 
+  miniperm.permissions:
+    description: Allow managing groups permissions
+    default: op 
+  miniperm.user:
+    description: Allow managing users
+    default: op 
+  miniperm.signs:
+    description: Allow creation and destruction of permission signs
+    default: op 
