@@ -26,7 +26,7 @@ This is the first push, not all requirements are implemented yet **AND** the cod
     * ✅ Permanent
     * ✅ Temporary - with a time specification. It should be possible to specify 4 days, 7 minutes, and 23 seconds in-game.
 
-* 🕒 Prefix of the group should be displayed in the chat and when joining the server.
+* ✅ Prefix of the group should be displayed in the chat and when joining the server.
 
 * ✅ When the player is assigned a new group, this should change **immediately** (player should not be kicked).
 
@@ -46,7 +46,7 @@ This is the first push, not all requirements are implemented yet **AND** the cod
 
 * 🟥 “*” permission.
 
-* 🕒 Support for multiple languages.
+* ✅ Support for multiple languages.
 
 * ☑️ Tablist with the respective group sorted.
 
@@ -60,3 +60,8 @@ This is the first push, not all requirements are implemented yet **AND** the cod
 As you need to set up a JDBC URL, here is an example to use PostgreSQL databases (it is also the only type which has drivers inserted):
 
 > **PostgreSQL:** `jdbc:postgresql://localhost:5432/db_name`
+
+
+## Notes and stuff
+* Only UUID is important for the permissions; Switching from/to an offline server (For testing!) will give a player a different UUID
+* all ingame messages are configurable (console is fixed and in english!)
