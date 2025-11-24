@@ -302,7 +302,9 @@ public class PermissionsMgr {
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     setPlayersGroup(player, (String) result[0], (Instant) result[1], false);
-                    plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
+                    if ((Instant) result[1] != null) {
+                        plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
+                    }
                 });
 
             } else {
