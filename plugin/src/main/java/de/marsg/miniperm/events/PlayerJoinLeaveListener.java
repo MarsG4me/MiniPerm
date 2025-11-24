@@ -46,8 +46,6 @@ public class PlayerJoinLeaveListener implements Listener {
 
         Player player = event.getPlayer();
 
-        plugin.getLogger().info("Quit player is: "+player.getName());
-
         PermissionGroup group = plugin.getPermissionsMgr().getPlayersGroup(player);
         Map<String, String> placeholders = Map.of(
                 "%player%", player.getName(),
