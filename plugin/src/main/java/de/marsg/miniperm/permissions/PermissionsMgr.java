@@ -189,6 +189,14 @@ public class PermissionsMgr {
      * All player related parts
      */
 
+    public void updateLanguage(Player player, String language){
+        PlayerData data = playersData.get(player);
+        data.updateLanguage(language);  
+        CompletableFuture.runAsync(
+                        () -> DBMgr.updateUsersLanguage(player.getUniqueId(), language)
+        );
+    }
+
     public boolean removePlayersGroup(Player player) {
         return setPlayersGroup(player, defaultGroup.getName(), null);
     }
@@ -293,28 +301,37 @@ public class PermissionsMgr {
     /*
      * Setup and user data load parts
      */
+public CompletableFuture<Void> loadPlayerData(Player player) {
+    plugin.getLogger().info("Begin PlayerData creation");
 
-    public CompletableFuture<Void> loadPlayerData(Player player) {
-        plugin.getLogger().info("Begin PlayerData creation");
-        return CompletableFuture.runAsync(() -> {
-            Object[] result = DBMgr.getUsersGroup(player.getUniqueId());
-            if (result.length > 1) {
+    //Logic complicated but needed to ensure the return happens only AFTER the player data is created
+    return CompletableFuture.supplyAsync(() -> {
+        
+        return DBMgr.getUsersGroup(player.getUniqueId());
+    }).thenCompose(result -> {
+        
+        CompletableFuture<Void> completionFuture = new CompletableFuture<>();
 
-                Bukkit.getScheduler().runTask(plugin, () -> {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            try {
+                if (result.length > 1) {
                     setPlayersGroup(player, (String) result[0], (Instant) result[1], false);
+                    playersData.get(player).updateLanguage((String)result[2]);
                     if ((Instant) result[1] != null) {
                         plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
                     }
-                });
-
-            } else {
-
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    setPlayersGroup(player, defaultGroup.getName(), null, false);
-                });
+                } else {
+                    setPlayersGroup(player, defaultGroup.getName(), null, true);
+                }
+                completionFuture.complete(null); // Signal successful completion
+            } catch (Exception e) {
+                completionFuture.completeExceptionally(e); // Signal an error
             }
         });
-    }
+
+        return completionFuture; 
+    });
+}
 
     public void loadGroups() {
         CompletableFuture.runAsync(() -> {

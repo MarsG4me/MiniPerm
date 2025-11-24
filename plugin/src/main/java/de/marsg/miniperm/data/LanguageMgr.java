@@ -58,6 +58,9 @@ public class LanguageMgr {
         }
     }
 
+    public Set<String> getLanguages(){
+        return languageCache.keySet();
+    }
 
     private String getMessage(Player player, String key) {
         String lang = plugin.getPermissionsMgr().getPlayersData(player).getLanguage();

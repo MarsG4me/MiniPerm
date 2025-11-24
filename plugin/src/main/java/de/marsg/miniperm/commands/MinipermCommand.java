@@ -2,8 +2,6 @@ package de.marsg.miniperm.commands;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,6 +59,12 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
             case "test":
                 return testPermission(sender, args[1]);
 
+            case "language":
+                if (args.length < 2) {
+                    return false;
+                }
+                return manageLanguage(sender, args[1]);
+
             default:
                 if (sender instanceof Player player) {
                     langMgr.sendMessage(player, "cmd.invalid");
@@ -98,7 +102,7 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             List<String> subcommands = Arrays.asList(
-                    "groups", "permissions", "user", "create_sign", "test");
+                    "groups", "permissions", "user", "create_sign", "test", "language");
             StringUtil.copyPartialMatches(args[0], subcommands, completions);
 
         } else if (args[0].equalsIgnoreCase("groups")) {
@@ -124,11 +128,32 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
                 StringUtil.copyPartialMatches(args[1], subcommands, completions);
             } else if (args.length == 3) {
                 Bukkit.getServer().getOnlinePlayers().forEach(p -> completions.add(p.getName()));
+            }else if (args.length == 4) {
+                plugin.getPermissionsMgr().getGroupNames().forEach(completions::add);
+                completions.add(plugin.getPermissionsMgr().getDefaultGroupName());
             }
+        }else if(args[0].equalsIgnoreCase("language")){
+            plugin.getLanguageMgr().getLanguages().forEach(completions::add);
         }
 
         return completions;
 
+    }
+
+    private boolean manageLanguage(CommandSender sender, String language){
+        if (sender instanceof Player player) {
+
+            if (plugin.getLanguageMgr().getLanguages().contains(language)) {
+                plugin.getPermissionsMgr().updateLanguage(player, language);
+                plugin.getLanguageMgr().sendMessage(player, "language.set");
+            }else{
+                plugin.getLanguageMgr().sendMessage(player, "language.failed");
+            }
+            
+        } else {
+            sender.sendMessage("Only players can use this command!");
+        }
+        return true;
     }
 
     private boolean manageUsers(CommandSender sender, String... args) {

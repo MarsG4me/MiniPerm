@@ -273,6 +273,28 @@ public class DBMgr {
      * User related thinks
      */
 
+    public static boolean updateUsersLanguage(UUID uuid, String language){
+        try (Connection connection = dataSource.getConnection()) {
+            String query = """
+                    UPDATE users SET language = ? WHERE uuid = ?;
+                    """;
+
+            try (PreparedStatement pst = connection.prepareStatement(query)) {
+
+                pst.setString(1, language);
+                pst.setObject(2, uuid);
+
+                int rows = pst.executeUpdate();
+
+                return rows == 1;
+
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("[DB] Failed to set user's group: " + e.getMessage());
+        }
+        return false;
+    }
+
     public static boolean setUsersGroup(UUID uuid, int groupId, Instant expiresAt) {
         try (Connection connection = dataSource.getConnection()) {
             String query = """
@@ -309,13 +331,13 @@ public class DBMgr {
 
     /**
      * @param uuid
-     * @return {String groupName, Instant expiresAt}
+     * @return {String groupName, Instant expiresAt, String language}
      */
     public static Object[] getUsersGroup(UUID uuid) {
         try (Connection connection = dataSource.getConnection()) {
 
             String query = """
-                    SELECT g.name, u.expires_at
+                    SELECT g.name, u.expires_at, u.language
                     FROM groups g
                     JOIN users u ON g.id = u.groups_id
                     WHERE u.uuid = ?
@@ -331,7 +353,7 @@ public class DBMgr {
                     Timestamp expiryTimestamp = rst.getTimestamp(2);
                     Instant expiryInstant = (expiryTimestamp != null) ? expiryTimestamp.toInstant() : null;
 
-                    return new Object[] { rst.getString(1), expiryInstant };
+                    return new Object[] { rst.getString(1), expiryInstant, rst.getString(3)};
                 }
 
             }
@@ -360,6 +382,7 @@ public class DBMgr {
                         uuid UUID PRIMARY KEY,
                         groups_id INT NOT NULL,
                         expires_at TIMESTAMPTZ NULL,
+                        language VARCHAR(8) NOT NULL DEFAULT 'en',
                         CONSTRAINT fk_users_group FOREIGN KEY (groups_id)
                             REFERENCES groups (id)
                             ON UPDATE CASCADE

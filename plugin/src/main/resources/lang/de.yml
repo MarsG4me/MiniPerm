@@ -37,3 +37,7 @@ miniperm:
   test:
     has_permission: "§aDu hast die Berechtigung: %permission%"
     doesnt_have_permission: "§cDu hast die Berechtigung nicht: %permission%"
+
+language:
+  set: "§aDu hast deine Sprache aktualisiert."
+  failed: "§cDie gewählte Sprache existiert nicht!"

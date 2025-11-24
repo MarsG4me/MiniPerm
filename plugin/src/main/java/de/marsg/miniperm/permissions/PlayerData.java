@@ -44,4 +44,8 @@ public class PlayerData {
         return language;
     }
 
+    public void updateLanguage(String language){
+        this.language = language;
+    }
+
 }
