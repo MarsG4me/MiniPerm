@@ -12,11 +12,13 @@ import de.marsg.miniperm.data.LanguageMgr;
 import de.marsg.miniperm.events.ChatListener;
 import de.marsg.miniperm.events.PlayerJoinLeaveListener;
 import de.marsg.miniperm.permissions.PermissionsMgr;
+import de.marsg.miniperm.scheduler.GroupExpirationScheduler;
 
 public class MiniPerm extends JavaPlugin {
 
     private PermissionsMgr groupMgr;
     private LanguageMgr langMgr;
+    private GroupExpirationScheduler groupAutoRemover;
     
     @Override
     public void onEnable() {
@@ -39,6 +41,9 @@ public class MiniPerm extends JavaPlugin {
             //Load language Manager
             langMgr = new LanguageMgr(this);
             langMgr.loadAllLanguages();
+
+            //Auto group expiration manager
+            groupAutoRemover = new GroupExpirationScheduler(this);
 
 
             // Register commands
@@ -87,6 +92,10 @@ public class MiniPerm extends JavaPlugin {
 
     public LanguageMgr getLanguageMgr(){
         return langMgr;
+    }
+
+    public GroupExpirationScheduler getExpirationScheduler(){
+        return groupAutoRemover;
     }
 
 }

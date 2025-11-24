@@ -213,6 +213,7 @@ public class PermissionsMgr {
     }
 
     private boolean setPlayersGroup(Player player, String group, Instant expirationDate, boolean updateDb) {
+        plugin.getExpirationScheduler().removeTimer(player);
         plugin.getLogger().info(String.format("Setting %s's group to %s....", player.getName(), group));
         PermissionAttachment attachment;
         String language = "en";
@@ -235,6 +236,9 @@ public class PermissionsMgr {
             playersData.put(player, data);
             resetPlayersPermissions(player);
             syncPermissionsWithServer(player);
+            if (expirationDate != null) {
+                plugin.getExpirationScheduler().addTimer(player, expirationDate);
+            }
             plugin.getLogger().info(String.format("Set players group to %s.", group));
             return true;
 
@@ -298,6 +302,7 @@ public class PermissionsMgr {
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     setPlayersGroup(player, (String) result[0], (Instant) result[1], false);
+                    plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
                 });
 
             } else {
