@@ -30,8 +30,8 @@ cmd:
   invalid_type: "§c%arg% must be a %type%"
 
 server:
-  join: "%group% §c%player% joined the game."
-  leave: "%group% §c%player% left the game."
+  join: "%prefix% §6%player% joined the game."
+  leave: "%prefix% §c%player% left the game."
 
 miniperm:
   test:
