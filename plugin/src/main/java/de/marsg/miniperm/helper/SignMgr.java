@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -20,7 +21,7 @@ public class SignMgr {
 
     private Set<RankSign> signs = HashSet.newHashSet(2);
 
-    public SignMgr(MiniPerm plugin){
+    public SignMgr(MiniPerm plugin) {
         this.plugin = plugin;
     }
 
@@ -36,7 +37,7 @@ public class SignMgr {
         }
     }
 
-    public void setPlayerOffline(Player player){
+    public void setPlayerOffline(Player player) {
         for (RankSign rankSign : signs) {
             if (rankSign.isOwner(player)) {
                 rankSign.updateSign(player, false);
@@ -49,46 +50,77 @@ public class SignMgr {
         signs.removeIf(rankSign -> rankSign.isOwner(player));
     }
 
-    public void checkDestroyedSign(Location loc){
+    public void checkDestroyedSign(Location loc) {
         // Save to use (unlike a for-each) just like removePlayersSigns
-        signs.removeIf(rankSign -> rankSign.getLocation().equals(loc));
+
+        List<RankSign> invalidSigns = new ArrayList<>();
+
+        for (RankSign rankSign : signs) {
+            if (rankSign.getLocation().equals(loc)) {
+                invalidSigns.add(rankSign);
+            }
+        }
+
+        signs.removeIf(invalidSigns::contains);
+
+        CompletableFuture.runAsync(() -> {
+            invalidSigns.forEach(sign -> DBMgr.deleteRankSign(sign.getLocation().blockX(), sign.getLocation().blockY(),
+                    sign.getLocation().blockZ(), sign.getLocation().getWorld().getName()));
+        });
     }
 
-    
     public void initSigns() {
 
-        CompletableFuture<Set<RankSign>> fetchedSigns = CompletableFuture.supplyAsync(DBMgr::getAllRankSign);
+        // Fetch rank signs off the main thread, but process world/block access on the
+        // main thread
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return DBMgr.getAllRankSign();
+            } catch (Exception e) {
+                plugin.getLogger().warning("[SignMgr] Exception while fetching rank signs: " + e.getMessage());
+                return Set.<RankSign>of();
+            }
+        }).thenAccept(allSigns -> {
+            // Process the fetched signs on the main server thread to safely access blocks
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                List<CompletableFuture<Void>> invalidSigns = new ArrayList<>();
 
-        // process after data was fetched
-        fetchedSigns.thenCompose(allSigns -> {
+                for (RankSign rankSign : allSigns) {
+                    Block signBlock = rankSign.getLocation().getBlock();
 
-            // List to later async delete the invalid rank signs
-            List<CompletableFuture<Void>> invalidSigns = new ArrayList<>();
-
-            for (RankSign rankSign : allSigns) {
-
-                Block signBlock = rankSign.getLocation().getBlock();
-
-                if (signBlock.getState() instanceof Sign) {
-                    signs.add(rankSign);
-                } else {
-                    CompletableFuture<Void> deleteFuture = CompletableFuture.runAsync(() -> {
-                        DBMgr.deleteRankSign(
-                                signBlock.getX(),
-                                signBlock.getY(),
-                                signBlock.getZ(),
-                                signBlock.getWorld().getName());
-                    });
-                    invalidSigns.add(deleteFuture);
+                    if (signBlock.getState() instanceof Sign) {
+                        signs.add(rankSign);
+                        // initialize sign text on the main thread
+                        try {
+                            rankSign.initDefaultText();
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("[SignMgr] Failed to init sign text: " + e.getMessage());
+                        }
+                    } else {
+                        // delete invalid sign async (DB operation)
+                        CompletableFuture<Void> deleteFuture = CompletableFuture.runAsync(() -> {
+                            DBMgr.deleteRankSign(
+                                    signBlock.getX(),
+                                    signBlock.getY(),
+                                    signBlock.getZ(),
+                                    signBlock.getWorld().getName());
+                        });
+                        invalidSigns.add(deleteFuture);
+                    }
                 }
 
-            }
+                plugin.getLogger().info(String.format("Loaded %d rank signs.", signs.size()));
 
-            plugin.getLogger().info(String.format("Loaded %d rank signs.", signs.size()));
-
-            // Wait with return until everything is done
-            //return is only needed because of the thenCompose!
-            return CompletableFuture.allOf(invalidSigns.toArray(new CompletableFuture[0]));
+                // Optionally wait for delete operations to finish in background
+                if (!invalidSigns.isEmpty()) {
+                    CompletableFuture.allOf(invalidSigns.toArray(new CompletableFuture[0])).whenComplete((r, ex) -> {
+                        if (ex != null) {
+                            plugin.getLogger()
+                                    .warning("[DB] Error while deleting invalid rank signs: " + ex.getMessage());
+                        }
+                    });
+                }
+            });
         });
     }
 

@@ -19,6 +19,7 @@ public class SignBreakingListener implements Listener {
     public void onSignBreak(BlockBreakEvent event) {
         if (event.getBlock().getState() instanceof Sign) {
             plugin.getSignMgr().checkDestroyedSign(event.getBlock().getLocation());
+            plugin.getLogger().info("A potential rank sign was broken.");
         }
     }
 }
