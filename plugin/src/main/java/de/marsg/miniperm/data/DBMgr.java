@@ -22,6 +22,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import de.marsg.miniperm.MiniPerm;
+import de.marsg.miniperm.helper.RankSign;
 
 public class DBMgr {
 
@@ -107,7 +108,8 @@ public class DBMgr {
                     plugin.getLogger().info(String.format("[DB] Deleting group '%s' failed. It does not exist", name));
                 } else {
                     plugin.getLogger().warning(
-                            String.format("[DB] Deleting group '%s' deleted more than one entry!. Total: %d", name, rows));
+                            String.format("[DB] Deleting group '%s' deleted more than one entry!. Total: %d", name,
+                                    rows));
                 }
 
             }
@@ -221,11 +223,13 @@ public class DBMgr {
 
                 if (rows == 1) {
                     plugin.getLogger()
-                            .info(String.format("[DB] Permission '%s' removed from group '%d' in DB", permission, groupId));
+                            .info(String.format("[DB] Permission '%s' removed from group '%d' in DB", permission,
+                                    groupId));
                     return true;
                 } else if (rows == 0) {
                     plugin.getLogger().info(String.format(
-                            "[DB] Deleting permission '%s' failed for group %d. It does not exist", permission, groupId));
+                            "[DB] Deleting permission '%s' failed for group %d. It does not exist", permission,
+                            groupId));
                 } else {
                     plugin.getLogger()
                             .warning(String.format(
@@ -273,7 +277,7 @@ public class DBMgr {
      * User related thinks
      */
 
-    public static boolean updateUsersLanguage(UUID uuid, String language){
+    public static boolean updateUsersLanguage(UUID uuid, String language) {
         try (Connection connection = dataSource.getConnection()) {
             String query = """
                     UPDATE users SET language = ? WHERE uuid = ?;
@@ -310,7 +314,7 @@ public class DBMgr {
                 pst.setInt(2, groupId);
                 if (expiresAt == null) {
                     pst.setNull(3, Types.TIMESTAMP_WITH_TIMEZONE);
-                }else{
+                } else {
                     pst.setTimestamp(3, Timestamp.from(expiresAt));
                 }
 
@@ -318,7 +322,8 @@ public class DBMgr {
 
                 if (rows == 1) {
                     plugin.getLogger()
-                            .info(String.format("[DB] Set a users group. UUID: %s; groupID: %d", uuid.toString(), groupId));
+                            .info(String.format("[DB] Set a users group. UUID: %s; groupID: %d", uuid.toString(),
+                                    groupId));
                     return true;
                 }
 
@@ -353,7 +358,7 @@ public class DBMgr {
                     Timestamp expiryTimestamp = rst.getTimestamp(2);
                     Instant expiryInstant = (expiryTimestamp != null) ? expiryTimestamp.toInstant() : null;
 
-                    return new Object[] { rst.getString(1), expiryInstant, rst.getString(3)};
+                    return new Object[] { rst.getString(1), expiryInstant, rst.getString(3) };
                 }
 
             }
@@ -361,6 +366,88 @@ public class DBMgr {
             plugin.getLogger().warning("[DB] Failed to get user's group: " + e.getMessage());
         }
         return new Object[] {};
+    }
+
+    /*
+     * The Rank Sign parts
+     */
+
+    public static boolean createRankSign(UUID uuid, int coordX, int coordY, int coordZ, String worldName) {
+        try (Connection connection = dataSource.getConnection()) {
+            String query = """
+                    INSERT INTO rank_signs
+                    (coord_x, coord_y, coord_z, world, users_uuid)
+                    VALUES (?, ?, ?, ?, ?);
+                    """;
+            try (PreparedStatement pst = connection.prepareStatement(query)) {
+
+                pst.setInt(1, coordX);
+                pst.setInt(2, coordY);
+                pst.setInt(3, coordZ);
+                pst.setString(4, worldName);
+                pst.setObject(5, uuid);
+
+                int rows = pst.executeUpdate();
+
+                return rows == 1;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("[DB] Failed to set user's group: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean deleteRankSign(int coordX, int coordY, int coordZ, String worldName) {
+        try (Connection connection = dataSource.getConnection()) {
+            String query = """
+                    DELETE FROM rank_signs
+                    WHERE world = ?
+                    AND coord_x = ?
+                    AND coord_y = ?
+                    AND coord_z = ?;
+                    """;
+            try (PreparedStatement pst = connection.prepareStatement(query)) {
+
+                pst.setString(1, worldName);
+                pst.setInt(2, coordX);
+                pst.setInt(3, coordY);
+                pst.setInt(4, coordZ);
+
+                int rows = pst.executeUpdate();
+
+                return rows == 1;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("[DB] Failed to set user's group: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static Set<RankSign> getAllRankSign() {
+        try (Connection connection = dataSource.getConnection()) {
+            String query = """
+                    SELECT coord_x, coord_y, coord_z, world, users_uuid
+                    FROM rank_signs;
+                    """;
+            try (PreparedStatement pst = connection.prepareStatement(query)) {
+
+                ResultSet rst = pst.executeQuery();
+
+                Set<RankSign> result = HashSet.newHashSet(5);
+
+                while (rst.next()) {
+                    result.add(new RankSign(plugin, rst.getString("world"), rst.getInt("coord_x"),
+                            rst.getInt("coord_y"), rst.getInt("coord_z"), (UUID) rst.getObject("users_uuid")));
+                }
+
+                plugin.getLogger().info(String.format("[DB] Fetched %d entries for rank_signs.", result.size()));
+
+                return result;
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("[DB] Failed to fetch rank signs: " + e.getMessage());
+        }
+        return HashSet.newHashSet(0);
     }
 
     /*
@@ -403,6 +490,15 @@ public class DBMgr {
                     CREATE INDEX IF NOT EXISTS idx_users_group_id ON users(groups_id);
                     CREATE INDEX IF NOT EXISTS idx_permissions_group_id ON permissions(groups_id);
                     CREATE INDEX IF NOT EXISTS idx_permissions_permission ON permissions(permission);
+
+                    CREATE TABLE IF NOT EXISTS rank_signs (
+                        coord_x INT,
+                        coord_y INT,
+                        coord_z INT,
+                        world VARCHAR(36),
+                        users_uuid VARCHAR(36),
+                        PRIMARY KEY (coord_x, coord_y, coord_z, world)
+                    );
                     """;
             try (PreparedStatement pst = connection.prepareStatement(tables)) {
 
