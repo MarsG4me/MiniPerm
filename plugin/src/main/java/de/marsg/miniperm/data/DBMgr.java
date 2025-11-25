@@ -496,7 +496,7 @@ public class DBMgr {
                         coord_y INT,
                         coord_z INT,
                         world VARCHAR(36),
-                        users_uuid VARCHAR(36),
+                        users_uuid UUID,
                         PRIMARY KEY (coord_x, coord_y, coord_z, world)
                     );
                     """;
