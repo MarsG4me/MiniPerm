@@ -11,6 +11,8 @@ import de.marsg.miniperm.data.DBMgr;
 import de.marsg.miniperm.data.LanguageMgr;
 import de.marsg.miniperm.events.ChatListener;
 import de.marsg.miniperm.events.PlayerJoinLeaveListener;
+import de.marsg.miniperm.events.SignBreakingListener;
+import de.marsg.miniperm.helper.SignMgr;
 import de.marsg.miniperm.permissions.PermissionsMgr;
 import de.marsg.miniperm.scheduler.GroupExpirationScheduler;
 
@@ -19,7 +21,8 @@ public class MiniPerm extends JavaPlugin {
     private PermissionsMgr groupMgr;
     private LanguageMgr langMgr;
     private GroupExpirationScheduler groupAutoRemover;
-    
+    private SignMgr signsMgr;
+
     @Override
     public void onEnable() {
         try {
@@ -27,24 +30,27 @@ public class MiniPerm extends JavaPlugin {
             saveDefaultConfig();
 
             /*
-            * Ensure DB connection is setup
-            */
+             * Ensure DB connection is setup
+             */
             if (!DBMgr.setup(this)) {
                 getLogger().warning("DB setup failed! Disabeling plugin...");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
 
-            //Load group Manager
+            // The Rank sing stuffs
+            signsMgr = new SignMgr(this);
+            signsMgr.initSigns();
+
+            // Load group Manager
             groupMgr = new PermissionsMgr(this);
             groupMgr.loadGroups();
 
-            //Load language Manager
+            // Load language Manager
             langMgr = new LanguageMgr(this);
             langMgr.loadAllLanguages();
 
-            //Auto group expiration manager
+            // Auto group expiration manager
             groupAutoRemover = new GroupExpirationScheduler(this);
-
 
             // Register commands
 
@@ -56,8 +62,7 @@ public class MiniPerm extends JavaPlugin {
             // Register event listeners
             getServer().getPluginManager().registerEvents(new PlayerJoinLeaveListener(this), this);
             getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-
-
+            getServer().getPluginManager().registerEvents(new SignBreakingListener(this), this);
 
             getLogger().info("MiniPerm plugin enabled!");
         } catch (Exception e) {
@@ -67,7 +72,6 @@ public class MiniPerm extends JavaPlugin {
         }
     }
 
-    
     @Override
     public void onDisable() {
         try {
@@ -86,16 +90,19 @@ public class MiniPerm extends JavaPlugin {
         }
     }
 
-    public PermissionsMgr getPermissionsMgr(){
+    public PermissionsMgr getPermissionsMgr() {
         return groupMgr;
     }
 
-    public LanguageMgr getLanguageMgr(){
+    public LanguageMgr getLanguageMgr() {
         return langMgr;
     }
 
-    public GroupExpirationScheduler getExpirationScheduler(){
+    public GroupExpirationScheduler getExpirationScheduler() {
         return groupAutoRemover;
     }
 
+    public SignMgr getSignMgr() {
+        return signsMgr;
+    }
 }
