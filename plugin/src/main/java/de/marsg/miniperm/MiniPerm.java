@@ -6,6 +6,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import de.marsg.miniperm.commands.MinipermCommand;
+import de.marsg.miniperm.commands.MinipermTabCompleter;
 import de.marsg.miniperm.commands.WhoAmICommand;
 import de.marsg.miniperm.data.DBMgr;
 import de.marsg.miniperm.data.LanguageMgr;
@@ -55,7 +56,7 @@ public class MiniPerm extends JavaPlugin {
             // Register commands
 
             getCommand("miniperm").setExecutor(new MinipermCommand(this));
-            getCommand("miniperm").setTabCompleter(new MinipermCommand(this));
+            getCommand("miniperm").setTabCompleter(new MinipermTabCompleter(this));
 
             getCommand("whoami").setExecutor(new WhoAmICommand(this));
 
