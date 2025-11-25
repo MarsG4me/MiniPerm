@@ -189,12 +189,12 @@ public class PermissionsMgr {
      * All player related parts
      */
 
-    public void updateLanguage(Player player, String language){
+    public void updateLanguage(Player player, String language) {
         PlayerData data = playersData.get(player);
-        data.updateLanguage(language);  
+        data.updateLanguage(language);
         CompletableFuture.runAsync(
-                        () -> DBMgr.updateUsersLanguage(player.getUniqueId(), language)
-        );
+                () -> DBMgr.updateUsersLanguage(player.getUniqueId(), language));
+
     }
 
     public boolean removePlayersGroup(Player player) {
@@ -228,7 +228,7 @@ public class PermissionsMgr {
         if (playersData.containsKey(player)) {
             attachment = playersData.get(player).getAttachment();
             language = playersData.get(player).getLanguage();
-        }else{
+        } else {
             attachment = player.addAttachment(plugin);
         }
 
@@ -248,6 +248,7 @@ public class PermissionsMgr {
                 plugin.getExpirationScheduler().addTimer(player, expirationDate);
             }
             plugin.getLogger().info(String.format("Set players group to %s.", group));
+            plugin.getSignMgr().updatePlayersSigns(player);
             return true;
 
         } else if (group.equals(defaultGroup.getName())) {
@@ -262,6 +263,7 @@ public class PermissionsMgr {
             resetPlayersPermissions(player);
             syncPermissionsWithServer(player);
             plugin.getLogger().info("Set players group to default group.");
+            plugin.getSignMgr().updatePlayersSigns(player);
             return true;
         }
         return false;
@@ -301,37 +303,38 @@ public class PermissionsMgr {
     /*
      * Setup and user data load parts
      */
-public CompletableFuture<Void> loadPlayerData(Player player) {
-    plugin.getLogger().info("Begin PlayerData creation");
+    public CompletableFuture<Void> loadPlayerData(Player player) {
+        plugin.getLogger().info("Begin PlayerData creation");
 
-    //Logic complicated but needed to ensure the return happens only AFTER the player data is created
-    return CompletableFuture.supplyAsync(() -> {
-        
-        return DBMgr.getUsersGroup(player.getUniqueId());
-    }).thenCompose(result -> {
-        
-        CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+        // Logic complicated but needed to ensure the return happens only AFTER the
+        // player data is created
+        return CompletableFuture.supplyAsync(() -> {
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            try {
-                if (result.length > 1) {
-                    setPlayersGroup(player, (String) result[0], (Instant) result[1], false);
-                    playersData.get(player).updateLanguage((String)result[2]);
-                    if ((Instant) result[1] != null) {
-                        plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
+            return DBMgr.getUsersGroup(player.getUniqueId());
+        }).thenCompose(result -> {
+
+            CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                try {
+                    if (result.length > 1) {
+                        setPlayersGroup(player, (String) result[0], (Instant) result[1], false);
+                        playersData.get(player).updateLanguage((String) result[2]);
+                        if ((Instant) result[1] != null) {
+                            plugin.getExpirationScheduler().addTimer(player, (Instant) result[1]);
+                        }
+                    } else {
+                        setPlayersGroup(player, defaultGroup.getName(), null, true);
                     }
-                } else {
-                    setPlayersGroup(player, defaultGroup.getName(), null, true);
+                    completionFuture.complete(null); // Signal successful completion
+                } catch (Exception e) {
+                    completionFuture.completeExceptionally(e); // Signal an error
                 }
-                completionFuture.complete(null); // Signal successful completion
-            } catch (Exception e) {
-                completionFuture.completeExceptionally(e); // Signal an error
-            }
-        });
+            });
 
-        return completionFuture; 
-    });
-}
+            return completionFuture;
+        });
+    }
 
     public void loadGroups() {
         CompletableFuture.runAsync(() -> {
