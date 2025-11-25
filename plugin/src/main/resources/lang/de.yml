@@ -13,7 +13,7 @@ group:
   user_set_group_limited: "$aDu hast %player% die gruppe %group% gegeben bis %date%."
 
 user:
-  set: "§a%player%ist nun in der Gruppe %group%."
+  set: "§a%player% ist nun in der Gruppe %group%."
   removed: "§c%player% wurde von der Gruppe %group% entfernt."
   info: "§6Spieler '%player%' ist in der Gruppe '%group%'."
   info_limited: "§6Spieler '%player%' ist in der Gruppe '%group%' bis %date%."
@@ -22,14 +22,14 @@ user:
   auto_group_removal: "§5Die Zeit ist vorbei, du bist nun nicht mehr in der Gruppe '%group%'."
 
 whoami:
-  forever: "§6Du bist in der Gruppe '%group%'"
-  limited: "§6Du bist in der Gruppe '%group%''. Du wirst automatisch aus der Gruppe entfernt am %date%"
+  forever: "§6Du bist in der Gruppe '%group%'."
+  limited: "§6Du bist in der Gruppe '%group%'. Du wirst automatisch aus der Gruppe entfernt am %date%."
 
 cmd:
   no_permission: "§4Du hast keine Berechtigung diesen Befehl zu benutzen!"
   invalid: "§4Dieser Befehl existiert nicht!"
-  not_all_args_used: "§cFür diesen Befehl werden noch weitere argumente benötigt."
-  invalid_type: "§c%arg% muss vom type %type% sein."
+  not_all_args_used: "§cFür diesen Befehl werden noch weitere Argumente benötigt."
+  invalid_type: "§c%arg% muss vom Typ %type% sein."
   not_a_sign: "§cDu musst ein Schild anschauen!"
 
 server:
