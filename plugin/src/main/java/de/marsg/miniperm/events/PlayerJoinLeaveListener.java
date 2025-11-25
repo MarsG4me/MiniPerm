@@ -55,7 +55,7 @@ public class PlayerJoinLeaveListener implements Listener {
                 "%group%", group.getName());
 
         plugin.getSignMgr().setPlayerOffline(player);
-        
+
         plugin.getLanguageMgr().broadcast("server.leave", placeholders.entrySet());
 
         permMgr.playerLeft(player);

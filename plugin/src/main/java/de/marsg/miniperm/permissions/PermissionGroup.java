@@ -18,7 +18,7 @@ public class PermissionGroup {
      * @param prefix
      * @param weight
      * @param isDefaultGroup
-     * This is the creator to use when generating a new group
+     *                       This is the creator to use when generating a new group
      */
     public PermissionGroup(int id, String name, String prefix, int weight, boolean isDefaultGroup) {
         this.id = id;
@@ -36,9 +36,11 @@ public class PermissionGroup {
      * @param weight
      * @param isDefaultGroup
      * @param permissions
-     * This is the creator to use when loading the groups from DB
+     *                       This is the creator to use when loading the groups from
+     *                       DB
      */
-    public PermissionGroup(int id, String name, String prefix, int weight, boolean isDefaultGroup, Set<String> permissions) {
+    public PermissionGroup(int id, String name, String prefix, int weight, boolean isDefaultGroup,
+            Set<String> permissions) {
         this.id = id;
         this.name = name;
         this.prefix = prefix;
@@ -51,7 +53,7 @@ public class PermissionGroup {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         if (this.id == -1) {
             this.id = id;
         }
@@ -85,7 +87,7 @@ public class PermissionGroup {
      * @param permission
      * @return TRUE if the permission was removed; FALSE if it never existed
      */
-    public boolean removePermission(String permission){
+    public boolean removePermission(String permission) {
         return permissions.remove(permission);
     }
 
@@ -93,7 +95,7 @@ public class PermissionGroup {
      * @param permission
      * @return TRUE if the permission was added; FALSE if it was present before
      */
-    public boolean addPermission(String permission){
+    public boolean addPermission(String permission) {
         return permissions.add(permission);
     }
 

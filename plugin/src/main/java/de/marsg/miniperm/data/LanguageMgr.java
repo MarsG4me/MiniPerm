@@ -58,7 +58,7 @@ public class LanguageMgr {
         }
     }
 
-    public Set<String> getLanguages(){
+    public Set<String> getLanguages() {
         return languageCache.keySet();
     }
 

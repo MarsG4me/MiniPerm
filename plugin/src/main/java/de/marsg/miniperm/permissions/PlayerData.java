@@ -11,40 +11,41 @@ public class PlayerData {
     private String language;
     private PermissionAttachment attatchment;
 
-    public PlayerData(PermissionGroup group, PermissionAttachment attatchment, Instant expiresAt){
+    public PlayerData(PermissionGroup group, PermissionAttachment attatchment, Instant expiresAt) {
         this.group = group;
         this.attatchment = attatchment;
         this.expiresAt = expiresAt;
         this.language = "en";
     }
 
-    public PlayerData(PermissionGroup group, PermissionAttachment attatchment, Instant expiresAt, String language){
+    public PlayerData(PermissionGroup group, PermissionAttachment attatchment, Instant expiresAt, String language) {
         this.group = group;
         this.attatchment = attatchment;
         this.expiresAt = expiresAt;
         this.language = language;
     }
-    public PermissionGroup getGroup(){
+
+    public PermissionGroup getGroup() {
         return group;
     }
 
-    public PermissionAttachment getAttachment(){
+    public PermissionAttachment getAttachment() {
         return attatchment;
     }
 
-    public Instant getExpirationTimestamp(){
+    public Instant getExpirationTimestamp() {
         return expiresAt;
     }
 
-    public boolean isExpired(){
-        return expiresAt != null &&  expiresAt.isBefore(Instant.now());
+    public boolean isExpired() {
+        return expiresAt != null && expiresAt.isBefore(Instant.now());
     }
 
-    public String getLanguage(){
+    public String getLanguage() {
         return language;
     }
 
-    public void updateLanguage(String language){
+    public void updateLanguage(String language) {
         this.language = language;
     }
 

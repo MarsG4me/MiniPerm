@@ -29,7 +29,7 @@ public class GroupExpirationScheduler {
         long delayMillis = Duration.between(Instant.now(), expiresAt).toMillis();
         // Convert milliseconds to ticks (1000 milli per second and 20 ticks per second)
         // ! AS THIS USES TICKS; INCREASING TICK SPEED WILL BREAK THE CORRECT TIMING !
-        long delayTicks = Math.max(1, delayMillis / 50); //->Ensures to never have negative delay
+        long delayTicks = Math.max(1, delayMillis / 50); // ->Ensures to never have negative delay
 
         BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
