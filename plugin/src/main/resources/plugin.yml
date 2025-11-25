@@ -1,5 +1,5 @@
 name: MiniPerm
-version: '1.0.10a'
+version: '1.2.8a'
 main: de.marsg.miniperm.MiniPerm
 api-version: '1.21'
 description: Coding test - Permissions Plugin
@@ -12,6 +12,8 @@ commands:
       §f/miniperm permissions <group_name> <list/add/remove> [permission] §7- Manage a specific group
       §f/miniperm user <info/set_group/remove_group> <player_name> [group_name] [time] §7- do group related stuff
       §f/miniperm create_sign §7- Creates a sign which displays the players role (MUST LOOK AT A SIGN)
+      §f/miniperm test <permission> §7- tells one if they have <permission> (using #hasPermission)
+      §f/miniperm language <language> §7- set your language to an available one
   whoami:
     description: Display a users group
     usage: |

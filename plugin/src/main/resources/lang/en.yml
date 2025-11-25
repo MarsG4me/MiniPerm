@@ -9,6 +9,8 @@ group:
   permission_removed: "§cYou removed the permission %permission%"
   permission_added_failed: "§cYou can't add the permission %permission% as the group already has it."
   permission_removed_failed: "§cYou can't remove the %permission% as the group doesn't have it."
+  user_set_group: "$aYou set %player% group to %group%."
+  user_set_group_limited: "$aYou set %player% group to %group% until %date%."
 
 user:
   set: "§aSet %player%'s group to %group%."
@@ -20,14 +22,15 @@ user:
   auto_group_removal: "§5The time is up, you are now no longer in the group '%group%'."
 
 whoami:
-  forever: "§6Your group is '%group%''."
-  limited: "§6Your group is '%group%''. And you are part of it until %date%."
+  forever: "§6Your group is '%group%'."
+  limited: "§6Your group is '%group%'. And you are part of it until %date%."
 
 cmd:
   no_permission: "§4You don't have permission to use this command!"
   invalid: "§4This command does not exist!"
   not_all_args_used: "§cThis command needs some more arguments."
   invalid_type: "§c%arg% must be a %type%"
+  not_a_sign: "§cTarget block must be a sign."
 
 server:
   join: "%prefix% §6%player% joined the game."

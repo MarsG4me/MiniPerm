@@ -9,6 +9,8 @@ group:
   permission_removed: "§cDu hast die Berechtigung %permission% entfernt."
   permission_added_failed: "§cDu kannst die Berechtigung %permission% nicht hinzufügen da diese bereits existiert."
   permission_removed_failed: "§cDu kannst die Berechtigung %permission% nicht entfernen da es diese nicht gibt."
+  user_set_group: "$aDu hast %player% die gruppe %group% gegeben."
+  user_set_group_limited: "$aDu hast %player% die gruppe %group% gegeben bis %date%."
 
 user:
   set: "§a%player%ist nun in der Gruppe %group%."
@@ -28,6 +30,7 @@ cmd:
   invalid: "§4Dieser Befehl existiert nicht!"
   not_all_args_used: "§cFür diesen Befehl werden noch weitere argumente benötigt."
   invalid_type: "§c%arg% muss vom type %type% sein."
+  not_a_sign: "§cDu musst ein Schild anschauen!"
 
 server:
   join: "%prefix% §6%player% hat den Server betreten."
