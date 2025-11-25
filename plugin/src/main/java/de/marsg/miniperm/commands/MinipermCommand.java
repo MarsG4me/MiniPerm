@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import de.marsg.miniperm.MiniPerm;
+import de.marsg.miniperm.data.DBMgr;
 import de.marsg.miniperm.data.LanguageMgr;
+import de.marsg.miniperm.helper.RankSign;
 import de.marsg.miniperm.permissions.PermissionGroup;
 import de.marsg.miniperm.permissions.PermissionsMgr;
 import de.marsg.miniperm.permissions.PlayerData;
@@ -53,8 +58,7 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
                 return manageUsers(sender, args);
 
             case "create_sign":
-
-                break;
+                return manageSigns(sender);
 
             case "test":
                 return testPermission(sender, args[1]);
@@ -84,17 +88,13 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
 
         if (sender instanceof Player player && args.length > 1) {
 
-            if (!player.hasPermission("miniperm.admin")) {
-                return completions;
-            }
-
             String subcommand = args[0].toLowerCase();
 
             // Check if the subcommand requires a specific permission
             if (SUBCOMMAND_PERMISSIONS.containsKey(subcommand)) {
                 String requiredPermission = SUBCOMMAND_PERMISSIONS.get(subcommand);
 
-                if (!player.hasPermission(requiredPermission)) {
+                if (!player.hasPermission(requiredPermission) && !player.hasPermission("miniperm.admin")) {
                     return completions;
                 }
             }
@@ -128,11 +128,11 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
                 StringUtil.copyPartialMatches(args[1], subcommands, completions);
             } else if (args.length == 3) {
                 Bukkit.getServer().getOnlinePlayers().forEach(p -> completions.add(p.getName()));
-            }else if (args.length == 4) {
+            } else if (args.length == 4) {
                 plugin.getPermissionsMgr().getGroupNames().forEach(completions::add);
                 completions.add(plugin.getPermissionsMgr().getDefaultGroupName());
             }
-        }else if(args[0].equalsIgnoreCase("language")){
+        } else if (args[0].equalsIgnoreCase("language") && args.length == 2) {
             plugin.getLanguageMgr().getLanguages().forEach(completions::add);
         }
 
@@ -140,16 +140,42 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
 
     }
 
-    private boolean manageLanguage(CommandSender sender, String language){
+    private boolean manageSigns(CommandSender sender) {
+        if (sender instanceof Player player) {
+            if (!player.hasPermission("miniperm.admin") && !player.hasPermission("miniperm.signs")) {
+                plugin.getLanguageMgr().sendMessage(player, "cmd.no_permission");
+                return true;
+            }
+
+            Block target = player.getTargetBlockExact(10);
+            if (target.getState() instanceof Sign) {
+                plugin.getSignMgr().addSign(new RankSign(plugin, target.getWorld().getName(), target.getX(),
+                        target.getY(), target.getZ(), player.getUniqueId()));
+                plugin.getSignMgr().updatePlayersSigns(player);
+
+                CompletableFuture.runAsync(() -> DBMgr.createRankSign(player.getUniqueId(), target.getX(),
+                        target.getY(), target.getZ(), target.getWorld().getName()));
+
+            } else {
+                plugin.getLanguageMgr().sendMessage(player, "cmd.not_a_sign");
+            }
+
+        } else {
+            sender.sendMessage("Only players can use this command!");
+        }
+        return true;
+    }
+
+    private boolean manageLanguage(CommandSender sender, String language) {
         if (sender instanceof Player player) {
 
             if (plugin.getLanguageMgr().getLanguages().contains(language)) {
                 plugin.getPermissionsMgr().updateLanguage(player, language);
                 plugin.getLanguageMgr().sendMessage(player, "language.set");
-            }else{
+            } else {
                 plugin.getLanguageMgr().sendMessage(player, "language.failed");
             }
-            
+
         } else {
             sender.sendMessage("Only players can use this command!");
         }
@@ -231,7 +257,7 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
         if (args.length < 4) {
             return false;
         }
-        // miniperm user add_group <player_name> <group_name> [time]
+        // miniperm user set_group <player_name> <group_name> [time]
         Player target = Bukkit.getPlayer(args[2]);
 
         if (target == null) {
@@ -256,6 +282,16 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 5) {
             plugin.getPermissionsMgr().setPlayersGroup(target, args[3], null);
+
+            if (sender instanceof Player player) {
+                Map<String, String> placeholders = Map.of(
+                        "%player%", target.getName(),
+                        "%group%", args[3].toLowerCase(),
+                        "%date%", "-");
+                plugin.getLanguageMgr().sendMessage(player, "group.user_set_group", placeholders.entrySet());
+            } else {
+                sender.sendMessage(String.format("You set %s group to %s", target.getName(), args[3].toLowerCase()));
+            }
             return true;
         }
 
@@ -270,6 +306,16 @@ public class MinipermCommand implements CommandExecutor, TabCompleter {
             }
         } else {
             plugin.getPermissionsMgr().setPlayersGroup(target, args[3], Instant.ofEpochSecond(expiration));
+
+            if (sender instanceof Player player) {
+                Map<String, String> placeholders = Map.of(
+                        "%player%", target.getName(),
+                        "%group%", args[3].toLowerCase(),
+                        "%date%", Instant.ofEpochSecond(expiration).toString());
+                plugin.getLanguageMgr().sendMessage(player, "group.user_set_group_limited", placeholders.entrySet());
+            } else {
+                sender.sendMessage(String.format("You set %s group to %s", target.getName(), args[3].toLowerCase()));
+            }
         }
 
         return true;
