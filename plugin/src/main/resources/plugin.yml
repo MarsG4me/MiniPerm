@@ -18,7 +18,7 @@ commands:
     description: Display a users group
     usage: |
       §cUsage:
-      §f/whoami spawnwitch §7- Give a message with the users group
+      §f/whoami §7- Give a message with the users group
 
 permissions:
   miniperm.admin:
