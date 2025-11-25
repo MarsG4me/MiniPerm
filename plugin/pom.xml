@@ -7,17 +7,14 @@
 
     <groupId>de.marsg.miniperm</groupId>
     <artifactId>miniperm</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.8a</version>
     <packaging>jar</packaging>
 
     <properties>
-        <!-- It's generally safer to target Java 17 for modern PaperMC versions (1.17+), 
-             but I'll keep 25 as requested, assuming you are using a Java 25 distribution. -->
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Define a variable for relocation to keep it clean -->
-        <relocation.prefix>de.marsg.miniperm.lib</relocation.prefix> 
+        <relocation.prefix>de.marsg.miniperm.lib</relocation.prefix>
     </properties>
 
     <repositories>
@@ -40,7 +37,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Adventure API (keep provided) -->
+        <!-- Adventure API -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
@@ -60,7 +57,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Examination (keep provided) -->
+        <!-- Examination -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>examination-api</artifactId>
@@ -79,13 +76,37 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>7.0.2</version>
-            <!-- Ensure it is not provided so it gets bundled -->
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.8</version>
-            <!-- Ensure it is not provided so it gets bundled -->
+        </dependency>
+
+        <!-- Unit Test Parts (JUnit for testing and Mockito for Mocking Bukkit parts)-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>6.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>6.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.20.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Found while googeling PaperMC Mocking-->
+        <dependency>
+            <groupId>org.mockbukkit.mockbukkit</groupId>
+            <artifactId>mockbukkit-v1.21</artifactId>
+            <version>4.98.0</version>
         </dependency>
     </dependencies>
 
@@ -99,6 +120,36 @@
         </resources>
 
         <plugins>
+            <!-- Run Unit Tests-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                    <argLine>${argLine}</argLine>
+                </configuration>
+            </plugin>
+            <!-- Report tool for e.g. CodeCoverage-->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
