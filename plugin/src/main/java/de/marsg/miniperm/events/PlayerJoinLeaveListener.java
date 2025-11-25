@@ -37,11 +37,13 @@ public class PlayerJoinLeaveListener implements Listener {
                     "%group%", group.getName());
 
             plugin.getLanguageMgr().broadcast("server.join", placeholders.entrySet());
+
+            plugin.getSignMgr().updatePlayersSigns(player);
         });
     }
 
     @EventHandler
-    public void onPlayerLe(PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         event.quitMessage(null);
 
         Player player = event.getPlayer();
@@ -52,6 +54,8 @@ public class PlayerJoinLeaveListener implements Listener {
                 "%prefix%", group.getPrefix(),
                 "%group%", group.getName());
 
+        plugin.getSignMgr().setPlayerOffline(player);
+        
         plugin.getLanguageMgr().broadcast("server.leave", placeholders.entrySet());
 
         permMgr.playerLeft(player);
