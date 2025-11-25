@@ -18,6 +18,11 @@ public class SignBreakingListener implements Listener {
     @EventHandler
     public void onSignBreak(BlockBreakEvent event) {
         if (event.getBlock().getState() instanceof Sign) {
+
+            /*
+             * Listener to auto remove broken rank signs so the DB entry can be removed if
+             * the sign is gone
+             */
             plugin.getSignMgr().checkDestroyedSign(event.getBlock().getLocation());
             plugin.getLogger().info("A potential rank sign was broken.");
         }

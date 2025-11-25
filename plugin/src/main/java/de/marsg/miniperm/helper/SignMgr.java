@@ -45,11 +45,11 @@ public class SignMgr {
         }
     }
 
-    public void removePlayersSigns(Player player) {
-        // Save to use (unlike a for-each)
-        signs.removeIf(rankSign -> rankSign.isOwner(player));
-    }
 
+    /**
+     * The counterpart of the SignBreakingListener
+     * @param loc
+     */
     public void checkDestroyedSign(Location loc) {
         // Save to use (unlike a for-each) just like removePlayersSigns
 
@@ -69,6 +69,9 @@ public class SignMgr {
         });
     }
 
+    /**
+     * initialize all rank signs from db and set their default texts
+     */
     public void initSigns() {
 
         // Fetch rank signs off the main thread, but process world/block access on the
@@ -111,7 +114,7 @@ public class SignMgr {
 
                 plugin.getLogger().info(String.format("Loaded %d rank signs.", signs.size()));
 
-                // Optionally wait for delete operations to finish in background
+                // wait for all delete operations to finish to catch any errors 
                 if (!invalidSigns.isEmpty()) {
                     CompletableFuture.allOf(invalidSigns.toArray(new CompletableFuture[0])).whenComplete((r, ex) -> {
                         if (ex != null) {

@@ -20,6 +20,13 @@ public class ChatListener implements Listener {
     public void onPlayerSendMessage(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
+        /*
+         *
+         * Attache the custom text renderer to the message to display the group prefix
+         * before the message
+         * 
+         */
+
         event.renderer(new CustomChatRenderer(plugin.getPermissionsMgr().getPlayersGroup(player).getPrefix()));
     }
 

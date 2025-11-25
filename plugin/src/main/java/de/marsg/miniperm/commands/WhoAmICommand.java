@@ -31,16 +31,24 @@ public class WhoAmICommand implements CommandExecutor {
 
             PlayerData playerData = plugin.getPermissionsMgr().getPlayersData(player);
 
-            // Use this when there is no expiration of this group assignment
             if (playerData == null || playerData.getExpirationTimestamp() == null) {
+                /*
+                 *
+                 * format and stuff for permanent groups
+                 * 
+                 */
                 Map<String, String> placeholders = Map.of(
                         "%player%", player.getName(),
                         "%prefix%", group.getPrefix(),
                         "%group%", group.getName());
                 langMgr.sendMessage(player, "whoami.forever", placeholders.entrySet());
 
-                // Use this if there is an expiration
             } else {
+                /*
+                 *
+                 * format and stuff for temporary groups
+                 * 
+                 */
                 Map<String, String> placeholders = Map.of(
                         "%player%", player.getName(),
                         "%prefix%", group.getPrefix(),

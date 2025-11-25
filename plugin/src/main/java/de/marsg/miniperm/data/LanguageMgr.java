@@ -58,10 +58,18 @@ public class LanguageMgr {
         }
     }
 
+    /**
+     * @return SET of loaded language codes to select from
+     */
     public Set<String> getLanguages() {
         return languageCache.keySet();
     }
 
+    /**
+     * @param player
+     * @param key    the message key
+     * @return The message in the players language
+     */
     private String getMessage(Player player, String key) {
         String lang = plugin.getPermissionsMgr().getPlayersData(player).getLanguage();
         YamlConfiguration config = languageCache.get(lang);
@@ -70,6 +78,14 @@ public class LanguageMgr {
         return config.getString(key, "§cMissing translation: " + key);
     }
 
+    /**
+     * @param messageKey   to the specific message
+     * @param placeholders [entrySet] of placeholders which will be replaced in the
+     *                     message
+     *                     This will send a message to all online players whith
+     *                     placeholders <br>
+     *                     Each player will get the message in their language
+     */
     public void broadcast(String messageKey, Set<Entry<String, String>> placeholders) {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             String msg = getMessage(player, messageKey);
@@ -82,6 +98,13 @@ public class LanguageMgr {
         }
     }
 
+    /**
+     * @param player       receiver of the message
+     * @param messageKey   to the specific message
+     * @param placeholders [entrySet] of placeholders which will be replaced in the
+     *                     message
+     *                     Send a message which has placeholders
+     */
     public void sendMessage(Player player, String messageKey, Set<Entry<String, String>> placeholders) {
         String msg = getMessage(player, messageKey);
 
@@ -92,6 +115,11 @@ public class LanguageMgr {
         player.sendMessage(Component.text(msg));
     }
 
+    /**
+     * @param player     receiver of the message
+     * @param messageKey to the specific message
+     *                   Send a message which has no placeholders
+     */
     public void sendMessage(Player player, String messageKey) {
         player.sendMessage(Component.text(getMessage(player, messageKey)));
     }

@@ -72,6 +72,14 @@ public class MinipermCommand implements CommandExecutor {
         return true;
     }
 
+    /*
+     *
+     *
+     * Sign Management
+     * 
+     * 
+     */
+
     private boolean manageSigns(CommandSender sender) {
         if (sender instanceof Player player) {
             if (!player.hasPermission("miniperm.admin") && !player.hasPermission("miniperm.signs")) {
@@ -98,6 +106,14 @@ public class MinipermCommand implements CommandExecutor {
         return true;
     }
 
+    /*
+     *
+     *
+     * Language Management
+     * 
+     * 
+     */
+
     private boolean manageLanguage(CommandSender sender, String language) {
         if (sender instanceof Player player) {
 
@@ -113,6 +129,14 @@ public class MinipermCommand implements CommandExecutor {
         }
         return true;
     }
+
+    /*
+     *
+     *
+     * User Management
+     * 
+     * 
+     */
 
     private boolean manageUsers(CommandSender sender, String... args) {
         if (args.length < 3) {
@@ -253,36 +277,6 @@ public class MinipermCommand implements CommandExecutor {
         return true;
     }
 
-    private long temporalHelper(String... args) {
-        String[] temporalArgs = Arrays.copyOfRange(args, 4, args.length);
-        Instant expiration = Instant.now();
-
-        try {
-            for (String timeArg : temporalArgs) {
-                if (timeArg.endsWith("d")) {
-                    String time = timeArg.replace("d", "");
-                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.DAYS);
-                } else if (timeArg.endsWith("h")) {
-                    String time = timeArg.replace("h", "");
-                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.HOURS);
-                } else if (timeArg.endsWith("m")) {
-                    String time = timeArg.replace("m", "");
-                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.MINUTES);
-                } else if (timeArg.endsWith("s")) {
-                    String time = timeArg.replace("s", "");
-                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.SECONDS);
-                } else {
-                    return -1;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        return expiration.getEpochSecond();
-    }
-
     private boolean manageUsersInfo(CommandSender sender, String... args) {
         Player target = Bukkit.getPlayer(args[2]);
 
@@ -322,6 +316,14 @@ public class MinipermCommand implements CommandExecutor {
 
         return true;
     }
+
+    /*
+     *
+     *
+     * Permissions Management
+     * 
+     * 
+     */
 
     private boolean managePermissions(CommandSender sender, String... args) {
         if (args.length < 3) {
@@ -445,6 +447,14 @@ public class MinipermCommand implements CommandExecutor {
         }
     }
 
+    /*
+     *
+     *
+     * Groups/Ranks Management
+     * 
+     * 
+     */
+
     private boolean manageGroups(CommandSender sender, String... args) {
         if (args.length < 2) {
             return false;
@@ -562,6 +572,14 @@ public class MinipermCommand implements CommandExecutor {
         }
     }
 
+    /*
+     *
+     *
+     * Test Permission Management
+     * 
+     * 
+     */
+
     private boolean testPermission(CommandSender sender, String permission) {
 
         if (sender instanceof Player player) {
@@ -581,5 +599,43 @@ public class MinipermCommand implements CommandExecutor {
             sender.sendMessage("Only players can use this command!");
         }
         return true;
+    }
+
+    /*
+     *
+     *
+     * Helper Methodes
+     * 
+     * 
+     */
+
+    private long temporalHelper(String... args) {
+        String[] temporalArgs = Arrays.copyOfRange(args, 4, args.length);
+        Instant expiration = Instant.now();
+
+        try {
+            for (String timeArg : temporalArgs) {
+                if (timeArg.endsWith("d")) {
+                    String time = timeArg.replace("d", "");
+                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.DAYS);
+                } else if (timeArg.endsWith("h")) {
+                    String time = timeArg.replace("h", "");
+                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.HOURS);
+                } else if (timeArg.endsWith("m")) {
+                    String time = timeArg.replace("m", "");
+                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.MINUTES);
+                } else if (timeArg.endsWith("s")) {
+                    String time = timeArg.replace("s", "");
+                    expiration = expiration.plus(Long.parseLong(time), ChronoUnit.SECONDS);
+                } else {
+                    return -1;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        return expiration.getEpochSecond();
     }
 }

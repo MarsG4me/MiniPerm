@@ -54,7 +54,11 @@ public class DBMgr {
     }
 
     /*
+     *
+     *
      * Group related parts
+     *
+     *
      */
 
     public static int addGroup(String name, String prefix, int weight, boolean isDefault) {
@@ -176,7 +180,11 @@ public class DBMgr {
     }
 
     /*
-     * Permissions stuff
+     *
+     *
+     * Permissions related parts
+     *
+     *
      */
 
     public static boolean addPermission(int groupId, String permission) {
@@ -274,7 +282,11 @@ public class DBMgr {
     }
 
     /*
-     * User related thinks
+     *
+     *
+     * User related parts
+     *
+     *
      */
 
     public static boolean updateUsersLanguage(UUID uuid, String language) {
@@ -369,7 +381,11 @@ public class DBMgr {
     }
 
     /*
-     * The Rank Sign parts
+     *
+     *
+     * Rank signs related parts
+     *
+     *
      */
 
     public static boolean createRankSign(UUID uuid, int coordX, int coordY, int coordZ, String worldName) {
@@ -451,7 +467,11 @@ public class DBMgr {
     }
 
     /*
-     * the default creation functions
+     *
+     *
+     * First setup related parts
+     *
+     *
      */
     private static boolean ensureTablesExist() {
         try (Connection connection = dataSource.getConnection()) {

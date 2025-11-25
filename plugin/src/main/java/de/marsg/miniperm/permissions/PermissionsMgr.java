@@ -28,7 +28,11 @@ public class PermissionsMgr {
     }
 
     /*
+    *
+    *
      * All group related parts
+    *
+    *
      */
 
     /**
@@ -104,8 +108,13 @@ public class PermissionsMgr {
         return false;
     }
 
+
     /*
-     * All Permission related parts
+    *
+    *
+     * All permissions related parts
+    *
+    *
      */
 
     public boolean addPermission(String group, String permission) {
@@ -185,8 +194,13 @@ public class PermissionsMgr {
         return true;
     }
 
+
     /*
-     * All player related parts
+    *
+    *
+     * All user related parts
+    *
+    *
      */
 
     public void updateLanguage(Player player, String language) {
@@ -310,8 +324,13 @@ public class PermissionsMgr {
         playersData.remove(player);
     }
 
+
     /*
-     * Setup and user data load parts
+    *
+    *
+     * Load userdata on login
+    *
+    *
      */
     public CompletableFuture<Void> loadPlayerData(Player player) {
         plugin.getLogger().info("Begin PlayerData creation");
@@ -346,6 +365,14 @@ public class PermissionsMgr {
         });
     }
 
+
+    /*
+    *
+    *
+     * Fetch groups on server startup
+    *
+    *
+     */
     public void loadGroups() {
         CompletableFuture.runAsync(() -> {
 

@@ -35,6 +35,11 @@ public class RankSign {
     }
 
     public void initDefaultText() {
+
+        /*
+         * Set Default sign text after server boot; reduces requests as we only update
+         * the players group when they join
+         */
         Block signBlock = getLocation().getBlock();
 
         Sign sign = null;
@@ -48,7 +53,11 @@ public class RankSign {
             return;
         }
 
-        // Do NOT overwrite the owner's name (line 0). Only set lines 1..3.
+        /*
+         * Keep the first line unchanged (that is the owners name)
+         * If the sign was edited somehow, this "error" will be fixed when the player
+         * joins the server
+         */
         SignSide frontSide = sign.getSide(Side.FRONT);
         frontSide.line(1, Component.text("--"));
         frontSide.line(2, Component.text(""));
@@ -80,6 +89,10 @@ public class RankSign {
             line4 = Component.text("OFFLINE").color(NamedTextColor.RED);
         }
 
+        /*
+         * Fully update the sign text to display and changes to the user (should also
+         * reflect name changes as the UUID stays fixed)
+         */
         SignSide frontSide = sign.getSide(Side.FRONT);
         frontSide.line(0, Component.text(line1));
         frontSide.line(1, Component.text(line2));
@@ -98,7 +111,18 @@ public class RankSign {
         updateSign(player, player.isOnline());
     }
 
+    /**
+     * @param player
+     * @param setOnline OVERRIDE THE ONLINE STATUS
+     *                  <p>
+     *                  Mainly used for the quit event as the #isOnline check is
+     *                  unreliable here
+     */
     public void updateSign(Player player, boolean setOnline) {
+        /*
+         * Mainly used when players quit as the Player object at the time we take it
+         * from te event is still considered online
+         */
         if (isOwner(player)) {
             PlayerData data = plugin.getPermissionsMgr().getPlayersData(player);
 

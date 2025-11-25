@@ -18,6 +18,10 @@ public class CustomChatRenderer implements ChatRenderer {
     @Override
     public Component render(Player source, Component sourceDisplayName, Component message, Audience viewer) {
 
+        /*
+         * The custom chat message format used to display the groups prefix of the
+         * sender infront of their name
+         */
         Component nameComponent = Component.text()
                 .append(Component.text(" <"))
                 .append(sourceDisplayName)

@@ -13,12 +13,13 @@ public class PermissionGroup {
     private Set<String> permissions;
 
     /**
+     * This is the creator to use when generating a new group
+     * 
      * @param id
      * @param name
      * @param prefix
      * @param weight
      * @param isDefaultGroup
-     *                       This is the creator to use when generating a new group
      */
     public PermissionGroup(int id, String name, String prefix, int weight, boolean isDefaultGroup) {
         this.id = id;
@@ -30,14 +31,15 @@ public class PermissionGroup {
     }
 
     /**
+     * This is the creator to use when loading the groups from
+     * DB
+     * 
      * @param id
      * @param name
      * @param prefix
      * @param weight
      * @param isDefaultGroup
      * @param permissions
-     *                       This is the creator to use when loading the groups from
-     *                       DB
      */
     public PermissionGroup(int id, String name, String prefix, int weight, boolean isDefaultGroup,
             Set<String> permissions) {

@@ -24,7 +24,7 @@ public class PlayerJoinLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.joinMessage(null);
+        event.joinMessage(null); // disable default message
 
         Player player = event.getPlayer();
 
@@ -36,6 +36,9 @@ public class PlayerJoinLeaveListener implements Listener {
                     "%prefix%", group.getPrefix(),
                     "%group%", group.getName());
 
+            /*
+             * Send the join message in each players language to every online player
+             */
             plugin.getLanguageMgr().broadcast("server.join", placeholders.entrySet());
 
             plugin.getSignMgr().updatePlayersSigns(player);
@@ -44,7 +47,7 @@ public class PlayerJoinLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        event.quitMessage(null);
+        event.quitMessage(null); // disable default message
 
         Player player = event.getPlayer();
 
@@ -56,6 +59,9 @@ public class PlayerJoinLeaveListener implements Listener {
 
         plugin.getSignMgr().setPlayerOffline(player);
 
+        /*
+         * Send the quit message in each players language to every online player
+         */
         plugin.getLanguageMgr().broadcast("server.leave", placeholders.entrySet());
 
         permMgr.playerLeft(player);
